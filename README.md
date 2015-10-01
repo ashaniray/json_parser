@@ -18,7 +18,7 @@ Download and install [Boost (1.59.0)](http://www.boost.org/) to compile the code
 No additional include/linking is required.
 
 ### Prerequisties
-- Boost (including Boost Spirit)
+- [Boost](http://www.boost.org/) (including Boost [Spirit](http://www.boost.org/doc/libs/1_59_0/libs/spirit/doc/html/index.html) )
 
 ## Usage
 
