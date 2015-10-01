@@ -1,6 +1,6 @@
 # json_spirit
 
-Header only library for parsing JSON (using the Boost Spirit library).
+**json_spirit** is a C++ header only library for parsing JSON based on the Boost Spirit 2.x library.
 
 The only file that needs to be included is "json_parser.h"
 
@@ -40,6 +40,7 @@ typedef boost::make_recursive_variant<
 
 ```
 A json_node at the root can contain a map of [string, json_node]. It is a recursive structure.
+
 Sample code to use the parser is given below:
 
 ```c++
