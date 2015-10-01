@@ -1,6 +1,6 @@
-# json_spirit
+# json_parser
 
-**json_spirit** is a C++ header only library for parsing JSON based on the Boost Spirit 2.x library.
+**json_parser** is a C++ header only library for parsing JSON based on the **Boost Spirit 2.x** library.
 
 The only file that needs to be included is "json_parser.h"
 
@@ -18,7 +18,7 @@ Download and install [Boost (1.59.0)](http://www.boost.org/) to compile the code
 No additional include/linking is required.
 
 ### Prerequisties
-- [Boost](http://www.boost.org/) (including Boost [Spirit](http://www.boost.org/doc/libs/1_59_0/libs/spirit/doc/html/index.html) )
+- [Boost 1.59](http://www.boost.org/) (including [Boost Spirit 2.x](http://www.boost.org/doc/libs/1_59_0/libs/spirit/doc/html/index.html) )
 
 ## Usage
 
