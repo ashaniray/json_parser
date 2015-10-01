@@ -53,7 +53,7 @@ using namespace json_parser;
 
 int main()
 {
-  const std::string str = "<your json string>";
+  string str = "<your json string>";
   string::const_iterator iterBegin = str.begin();
   string::const_iterator iterEnd = str.end();
 
