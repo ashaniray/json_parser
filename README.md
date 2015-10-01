@@ -58,7 +58,7 @@ int main()
   json_node root;
   if (parse_json(iterBegin, iterEnd, root))
   {
-    // The parsed JSON is in "node" now.
+    // The parsed JSON is in "root" now.
     cout << "Parsing succeeded\n";
     apply_visitor(pretty_print_visitor(cout), root);
   }
