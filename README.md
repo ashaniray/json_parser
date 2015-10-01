@@ -40,6 +40,7 @@ typedef boost::make_recursive_variant<
 
 ```
 A json_node at the root can contain a map of [string, json_node]. It is a recursive structure.
+
 Sample code to use the parser is given below:
 
 ```c++
