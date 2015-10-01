@@ -76,8 +76,9 @@ namespace json_parser
 						bool_ [_val = construct<json_node>(_1) ] 
 						;
 			array_rule = '[' >> (value_rule  % char_(',') ) [ _val =  construct<json_node>(_1) ] >> ']';
-			string_rule = lexeme[ '\"' >> *( char_ - '\"'  ) >> '\"' ] [_val = construct<json_node>(vector2string(_1))];
-			string_key_rule = lexeme[ '\"' >> *( char_ - '\"'  ) >> '\"' ] [_val = vector2string(_1)];
+			string_rule = string_key_rule [_val = construct<json_node>(_1)];
+			string_key_rule = lexeme[ '\"' >> *( char_ - '\"'  ) >> '\"' ] [_val = vector2string(_1)] |
+							lexeme[ '\'' >> *( char_ - '\''  ) >> '\'' ] [_val = vector2string(_1)] ;
 		}
 
 		rule <Iterator, json_node(), space_type > start;
