@@ -6,7 +6,7 @@ The only file that needs to be included is "json_parser.h"
 
 The files included in the project are:
 - **json_parser.h** : Header file that parses the json. Only this file needs to be included for parsing JSON. Call the method **parse_json** to get your parsed JSON
-- pretty_print_visitor.h : A visitor patter implemenation of the parsed JSON. This is a sample implemenation of a 
+- pretty_print_visitor.h : A visitor pattern implemenation of the parsed JSON. This is a sample implemenation of a 
 visitor pattern on the parsed JSON and may not be included.
 - main.cpp : A sample application that reads a JSON string, parses it and prints the parse output 
 to show how the json_parser.h may be used.
@@ -14,6 +14,7 @@ to show how the json_parser.h may be used.
 ## Dependencies
 json_parser.h depends heavily on Boost Spirit library.
 Download and install [Boost (1.59.0)](http://www.boost.org/) to compile the code.
+
 No additional include/linking is required.
 
 ### Prerequisties
@@ -60,13 +61,14 @@ int main()
   {
     // The parsed JSON is in "root" now.
     cout << "Parsing succeeded\n";
+    // You application/logic for processing the JSON may 
+    // be implemented as a visitor pattern
     apply_visitor(pretty_print_visitor(cout), root);
   }
   else
   {
     cout << "Parsing failed\n";
   }
-
   cout << "Bye... :-) \n\n";
   return 0;
 }
