@@ -5,9 +5,9 @@
 The only file that needs to be included is "json_parser.h"
 
 The files included in the project are:
-- **json_parser.h** : Header file that parses the json. Only this file needs to be included for parsing JSON. Call the method **parse_json** to get your parsed JSON
+- **json_parser.h** : Header file that parses the json. Only this file needs to be included in your application for parsing JSON. Call the method **parse_json** to get your parsed JSON
 - pretty_print_visitor.h : A visitor pattern implemenation of the parsed JSON. This is a sample implemenation of a 
-visitor pattern on the parsed JSON and may not be included.
+visitor pattern on the parsed JSON and may not be included in your application.
 - main.cpp : A sample application that reads a JSON string, parses it and prints the parse output 
 to show how the json_parser.h may be used.
 
