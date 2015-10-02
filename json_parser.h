@@ -41,12 +41,17 @@ namespace json_parser
 		map<string, boost::recursive_variant_ >
 		>::type json_node;
 
-	string vector2string(vector<char, allocator<char> > str)
-	{ 
-		string val;
-		copy(str.begin(), str.end(), back_inserter(val));
-		return val;
-	}
+	struct vector2string
+	{
+		template <typename Sig>
+		struct result { typedef string type; };
+		string operator()(vector<char, allocator<char> > str) const
+		{ 
+			string val;
+			copy(str.begin(), str.end(), back_inserter(val));
+			return val;
+		}
+	};
 
 
 	struct make_json_node_from_pairs
@@ -64,12 +69,12 @@ namespace json_parser
 		}
 	};
 
-	BOOST_PHOENIX_ADAPT_FUNCTION(string, vector2string, json_parser::vector2string, 1);
-
 	template <typename Iterator>
 	struct JsonGrammar : grammar<Iterator, json_node(), space_type>
 	{
 		function<json_parser::make_json_node_from_pairs> make_json_node_from_pairs; 
+		function<json_parser::vector2string> vector2string; 
+
 		JsonGrammar() : JsonGrammar::base_type(start)
 		{
 			start = value_rule.alias();
