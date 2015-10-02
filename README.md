@@ -23,9 +23,9 @@ No additional include/linking is required.
 ## Usage
 
 - Include "json_parer.h"
-- Create and instance of json_parser::json_node and call **json_parser::parse_json**
+- Create an instance of json_parser::json_node and call **json_parser::parse_json**
 
-The parsed json is returned in the **json_node** supplied to parse_json
+The parsed json is returned in the **json_parser::json_node** supplied to parse_json
 
 json_node is defined as:
 
