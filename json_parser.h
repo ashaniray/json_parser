@@ -31,6 +31,7 @@ namespace json_parser
 	using boost::spirit::ascii::space_type;
 	using boost::phoenix::new_;
 	using boost::phoenix::construct;
+	using boost::phoenix::function;
 
 	typedef boost::make_recursive_variant<
 		string, 
@@ -47,22 +48,28 @@ namespace json_parser
 		return val;
 	}
 
-	json_node make_json_node_from_pairs(vector<pair<string, json_node> > v)
+
+	struct make_json_node_from_pairs
 	{
-		map<string, json_node> table;
-		for (vector<pair<string, json_node> >::iterator iter = v.begin(); iter != v.end(); ++iter)
+		template <typename Sig>
+		struct result { typedef json_node type; };
+		json_node operator()(vector<pair<string, json_node> > v) const
 		{
-			table[iter->first] = iter->second;
+			map<string, json_node> table;
+			for (vector<pair<string, json_node> >::iterator iter = v.begin(); iter != v.end(); ++iter)
+			{
+				table[iter->first] = iter->second;
+			}
+			return json_node(table);
 		}
-		return json_node(table);
-	}
+	};
 
 	BOOST_PHOENIX_ADAPT_FUNCTION(string, vector2string, json_parser::vector2string, 1);
-	BOOST_PHOENIX_ADAPT_FUNCTION(json_node, make_json_node_from_pairs, json_parser::make_json_node_from_pairs, 1);
 
 	template <typename Iterator>
 	struct JsonGrammar : grammar<Iterator, json_node(), space_type>
 	{
+		function<json_parser::make_json_node_from_pairs> make_json_node_from_pairs; 
 		JsonGrammar() : JsonGrammar::base_type(start)
 		{
 			start = value_rule.alias();
