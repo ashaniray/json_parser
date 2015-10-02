@@ -29,7 +29,7 @@ public:
 			indent(indent_depth_);
 			os_ << "\"" << key.c_str() << "\" : " ;
 			apply_visitor(pretty_print_visitor(os_, indent_depth_ + 1), node);
-			os_ << endl;
+			os_ << "," << endl;
 		}
 		indent(indent_depth_);
 		os_ << "}" << endl;
