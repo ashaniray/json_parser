@@ -15,7 +15,6 @@ namespace json_parser
 	namespace sp = boost::spirit;
 	namespace qi = boost::spirit::qi;
 	namespace ascii = boost::spirit::ascii;
-	namespace ph =  boost::phoenix;
 
 	typedef boost::make_recursive_variant<
 		std::string,
