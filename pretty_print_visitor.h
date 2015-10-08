@@ -17,7 +17,7 @@ public:
 		os_ << "\"" << str << "\"" ;
 	}
 
-	void operator() (const map<string, json_node>& node) const
+	void operator() (const map<const string, json_node>& node) const
 	{
 		os_ << endl;
 		indent(indent_depth_);
@@ -55,13 +55,12 @@ private:
 		static const string INDENT = "  ";
 		for (int i = 0; i < depth; i++)
 		{
-			os_ << INDENT; 			
+			os_ << INDENT;
 		}
 	}
-	
+
 private:
 	ostream& os_;
 	int indent_depth_;
 };
 #endif
-

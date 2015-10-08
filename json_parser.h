@@ -6,6 +6,7 @@
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/phoenix/object/new.hpp>
 #include <boost/phoenix/object/construct.hpp>
+#include <boost/fusion/adapted/std_pair.hpp>
 
 #include <string>
 #include <map>
@@ -15,103 +16,64 @@
 
 namespace json_parser
 {
-	using namespace std;
-
-	using boost::spirit::qi::double_;
-	using boost::spirit::qi::bool_;
-	using boost::spirit::qi::lexeme;
-	using boost::spirit::qi::_1;
-	using boost::spirit::qi::_2;
-	using boost::spirit::qi::_val;
-	using boost::spirit::qi::phrase_parse;
-	using boost::spirit::qi::rule;
-	using boost::spirit::qi::grammar;
-	using boost::spirit::ascii::char_;
-	using boost::spirit::ascii::space;
-	using boost::spirit::ascii::space_type;
-	using boost::phoenix::new_;
-	using boost::phoenix::construct;
-	using boost::phoenix::function;
+	namespace sp = boost::spirit;
+	namespace qi = boost::spirit::qi;
+	namespace ascii = boost::spirit::ascii;
+	namespace ph =  boost::phoenix;
 
 	typedef boost::make_recursive_variant<
-		string, 
-		double, 
-		bool, 
-		vector< boost::recursive_variant_ >, 
-		map<string, boost::recursive_variant_ >
+		std::string,
+		double,
+		bool,
+		std::vector< boost::recursive_variant_ >,
+		std::map<const std::string, boost::recursive_variant_ >
 		>::type json_node;
+		typedef std::vector<json_node> json_array;
+		typedef std::map<const std::string, json_node> json_map;
 
-	struct vector2string
+	template <typename Iterator, typename Node, typename Map, typename Array>
+	struct JsonGrammar : qi::grammar<Iterator, Node(), ascii::space_type>
 	{
-		template <typename Sig>
-		struct result { typedef string type; };
-		string operator()(vector<char, allocator<char> > str) const
-		{ 
-			string val;
-			copy(str.begin(), str.end(), back_inserter(val));
-			return val;
-		}
-	};
 
-
-	struct make_json_node_from_pairs
-	{
-		template <typename Sig>
-		struct result { typedef json_node type; };
-		json_node operator()(vector<pair<string, json_node> > v) const
-		{
-			map<string, json_node> table;
-			for (vector<pair<string, json_node> >::iterator iter = v.begin(); iter != v.end(); ++iter)
-			{
-				table[iter->first] = iter->second;
-			}
-			return json_node(table);
-		}
-	};
-
-	template <typename Iterator>
-	struct JsonGrammar : grammar<Iterator, json_node(), space_type>
-	{
-		function<json_parser::make_json_node_from_pairs> make_json_node_from_pairs; 
-		function<json_parser::vector2string> vector2string; 
+		  struct esc_parser: sp::qi::symbols<char,char> {
+		    esc_parser() {
+		      add("\\\\" , '\\') ("\\\"" , '"' ) ("\\n"  , '\n') ("\\r"  , '\r')
+		         ("\\b"  , '\b') ("\\f"  , '\f') ("\\t"  , '\t');
+		    }
+		  } escaped;
 
 		JsonGrammar() : JsonGrammar::base_type(start)
 		{
 			start = value_rule.alias();
-			object_rule = '{' >> (pair_rule  % char_(',')) [_val = make_json_node_from_pairs(_1)] >> '}' ;
-			pair_rule = (string_key_rule >> ':' >> value_rule) [ _val = construct<pair<string, json_node> >(_1, _2) ];
-			value_rule = 
-						object_rule [_val = _1] | 
-						array_rule [_val = _1] | 
-						string_rule [_val = _1] | 
-						double_ [_val = construct<json_node>(_1) ]  |
-						bool_ [_val = construct<json_node>(_1) ] 
+			value_rule %=
+						object_rule |
+						array_rule |
+						string_rule |
+						qi::double_ |
+						qi::bool_
 						;
-			array_rule = '[' >> (value_rule  % char_(',') ) [ _val =  construct<json_node>(_1) ] >> ']';
-			string_rule = string_key_rule [_val = construct<json_node>(_1)];
-			string_key_rule = lexeme[ '\"' >> *( char_ - '\"'  ) >> '\"' ] [_val = vector2string(_1)] |
-							lexeme[ '\'' >> *( char_ - '\''  ) >> '\'' ] [_val = vector2string(_1)] ;
+			object_rule = '{' >> -((string_rule >> ':' >> value_rule) % ',') >> '}';
+			array_rule  = '[' >> -(value_rule % ',') >> ']';
+			string_rule = qi::lexeme[ '\"' >> *( ascii::char_ - '\"'  ) >> '\"' ]  |
+							qi::lexeme[ '\'' >> *( ascii::char_ - '\''  ) >> '\'' ]  ;
 		}
 
-		rule <Iterator, json_node(), space_type > start;
-		rule <Iterator, pair<string, json_node>, space_type > pair_rule;
-		rule <Iterator, json_node(), space_type > object_rule;
-		rule <Iterator, json_node(), space_type > value_rule;
-		rule <Iterator, json_node(), space_type > array_rule;
-		rule <Iterator, json_node(), space_type > string_rule;
-		rule <Iterator, string(), space_type > string_key_rule;
+		qi::rule <Iterator, Node(), ascii::space_type > start;
+		qi::rule <Iterator, Node(), ascii::space_type > value_rule;
+		qi::rule <Iterator, Array(), ascii::space_type > array_rule;
+		qi::rule <Iterator, std::string(), ascii::space_type > string_rule;
+		qi::rule <Iterator, Map(), ascii::space_type > object_rule;
+
 	};
 
 	template <typename Iterator>
 	bool parse_json(Iterator first, Iterator last, json_node& node)
 	{
-		JsonGrammar<string::const_iterator> g;
-		bool r = phrase_parse(first, last, g, space, node);
-
+		JsonGrammar<std::string::const_iterator, json_node, json_map, json_array> g;
+		bool r = qi::phrase_parse(first, last, g, ascii::space, node);
 		if (!r || first != last) // fail if we did not get a full match
 			return false;
 		return r;
 	}
 }
 #endif
-
