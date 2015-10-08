@@ -2,10 +2,6 @@
 #define __JSON_PARSER__
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_core.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
-#include <boost/phoenix/object/new.hpp>
-#include <boost/phoenix/object/construct.hpp>
 #include <boost/fusion/adapted/std_pair.hpp>
 
 #include <string>
@@ -34,14 +30,6 @@ namespace json_parser
 	template <typename Iterator, typename Node, typename Map, typename Array>
 	struct JsonGrammar : qi::grammar<Iterator, Node(), ascii::space_type>
 	{
-
-		  struct esc_parser: sp::qi::symbols<char,char> {
-		    esc_parser() {
-		      add("\\\\" , '\\') ("\\\"" , '"' ) ("\\n"  , '\n') ("\\r"  , '\r')
-		         ("\\b"  , '\b') ("\\f"  , '\f') ("\\t"  , '\t');
-		    }
-		  } escaped;
-
 		JsonGrammar() : JsonGrammar::base_type(start)
 		{
 			start = value_rule.alias();
