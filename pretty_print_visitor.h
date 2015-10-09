@@ -37,11 +37,16 @@ public:
 
 	void operator() (const vector<json_node>& nodes) const
 	{
+		os_ << endl;
+		indent(indent_depth_ + 1);
+		os_ << "[";
 		for (vector<json_node>::const_iterator iter = nodes.begin(); iter != nodes.end(); ++iter)
 		{
-			apply_visitor(pretty_print_visitor(os_, indent_depth_ + 1), *iter);
+			apply_visitor(pretty_print_visitor(os_, indent_depth_ + 2), *iter);
 			os_ << ",";
 		}
+		indent(indent_depth_ + 1);
+		os_ << "]" << endl;
 	}
 
 	template<typename T> void operator() (const T & operand) const
