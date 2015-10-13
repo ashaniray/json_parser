@@ -31,15 +31,17 @@ json_node is defined as:
 
 ```cpp
 typedef boost::make_recursive_variant<
-        string, 
-        double, 
-        bool, 
-        vector< boost::recursive_variant_ >, 
-        map<string, boost::recursive_variant_ >
-        >::type json_node;
+		std::string,
+		double,
+		bool,
+		std::vector< boost::recursive_variant_ >,
+		std::map<const std::string, boost::recursive_variant_ >
+		>::type json_node;
+typedef std::vector<json_node> json_array;
+typedef std::map<const std::string, json_node> json_map;
 
 ```
-A json_node at the root can contain a map of [string, json_node]. It is a recursive structure.
+A json_node at the root can contains a map of [string, json_node]. It is a recursive structure.
 
 Sample code to use the parser is given below:
 
