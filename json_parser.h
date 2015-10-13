@@ -29,12 +29,14 @@ namespace json_parser
 	template <typename Iterator, typename Node, typename Map, typename Array>
 	struct json_grammar : qi::grammar<Iterator, Node(), ascii::space_type>
 	{
-		struct esc_parser: sp::qi::symbols<char,char> {
-	    esc_parser() {
-	      add("\\\\" , '\\') ("\\\"" , '"' ) ("\\n"  , '\n') ("\\r"  , '\r')
-	         ("\\b"  , '\b') ("\\f"  , '\f') ("\\t"  , '\t');
-	    }
-  	} escaped;
+		struct esc_parser: sp::qi::symbols<char,char> 
+		{
+			esc_parser() 
+			{
+			  add("\\\\" , '\\') ("\\\"" , '"' ) ("\\n"  , '\n') ("\\r"  , '\r')
+				("\\b"  , '\b') ("\\f"  , '\f') ("\\t"  , '\t');
+			}
+		} escaped;
 
 		json_grammar() : json_grammar::base_type(start)
 		{
