@@ -23,8 +23,8 @@ namespace json_parser
 		std::vector< boost::recursive_variant_ >,
 		std::map<const std::string, boost::recursive_variant_ >
 		>::type json_node;
-		typedef std::vector<json_node> json_array;
-		typedef std::map<const std::string, json_node> json_map;
+	typedef std::vector<json_node> json_array;
+	typedef std::map<const std::string, json_node> json_map;
 
 	template <typename Iterator, typename Node, typename Map, typename Array>
 	struct json_grammar : qi::grammar<Iterator, Node(), ascii::space_type>
