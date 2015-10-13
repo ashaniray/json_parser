@@ -27,9 +27,16 @@ namespace json_parser
 		typedef std::map<const std::string, json_node> json_map;
 
 	template <typename Iterator, typename Node, typename Map, typename Array>
-	struct JsonGrammar : qi::grammar<Iterator, Node(), ascii::space_type>
+	struct json_grammar : qi::grammar<Iterator, Node(), ascii::space_type>
 	{
-		JsonGrammar() : JsonGrammar::base_type(start)
+		struct esc_parser: sp::qi::symbols<char,char> {
+	    esc_parser() {
+	      add("\\\\" , '\\') ("\\\"" , '"' ) ("\\n"  , '\n') ("\\r"  , '\r')
+	         ("\\b"  , '\b') ("\\f"  , '\f') ("\\t"  , '\t');
+	    }
+  	} escaped;
+
+		json_grammar() : json_grammar::base_type(start)
 		{
 			start = value_rule.alias();
 			value_rule %=
@@ -41,8 +48,8 @@ namespace json_parser
 						;
 			object_rule = '{' >> -((string_rule >> ':' >> value_rule) % ',') >> '}';
 			array_rule  = '[' >> -(value_rule % ',') >> ']';
-			string_rule = qi::lexeme[ '\"' >> *( ascii::char_ - '\"'  ) >> '\"' ]  |
-							qi::lexeme[ '\'' >> *( ascii::char_ - '\''  ) >> '\'' ]  ;
+			string_rule = sp::lexeme['"' >> *((escaped | sp::qi::char_) - '"') >> '"'] |
+					sp::lexeme['\'' >> *((escaped | sp::qi::char_) - '\'') >> '\''] ;
 		}
 
 		qi::rule <Iterator, Node(), ascii::space_type > start;
@@ -56,7 +63,7 @@ namespace json_parser
 	template <typename Iterator>
 	bool parse_json(Iterator first, Iterator last, json_node& node)
 	{
-		JsonGrammar<std::string::const_iterator, json_node, json_map, json_array> g;
+		json_grammar<std::string::const_iterator, json_node, json_map, json_array> g;
 		bool r = qi::phrase_parse(first, last, g, ascii::space, node);
 		if (!r || first != last) // fail if we did not get a full match
 			return false;
