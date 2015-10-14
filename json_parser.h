@@ -29,9 +29,9 @@ namespace json_parser
 	template <typename Iterator, typename Node, typename Map, typename Array>
 	struct json_grammar : qi::grammar<Iterator, Node(), ascii::space_type>
 	{
-		struct esc_parser: sp::qi::symbols<char,char> 
+		struct esc_parser: sp::qi::symbols<char,char>
 		{
-			esc_parser() 
+			esc_parser()
 			{
 			  add("\\\\" , '\\') ("\\\"" , '"' ) ("\\n"  , '\n') ("\\r"  , '\r')
 				("\\b"  , '\b') ("\\f"  , '\f') ("\\t"  , '\t');
@@ -46,7 +46,8 @@ namespace json_parser
 						array_rule |
 						string_rule |
 						qi::double_ |
-						qi::bool_
+						qi::bool_ |
+						"null"
 						;
 			object_rule = '{' >> -((string_rule >> ':' >> value_rule) % ',') >> '}';
 			array_rule  = '[' >> -(value_rule % ',') >> ']';
